@@ -1,0 +1,26 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Namespace }}-{{ include "network-latency-exporter.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "network-latency-exporter.name" . }}-service-monitor
+    app.kubernetes.io/component: monitoring
+spec:
+  endpoints:
+    - interval: {{ default "30s" .Values.serviceMonitor.interval }}
+      scrapeTimeout: {{ default "20s" .Values.serviceMonitor.scrapeTimeout }}
+      port: metrics
+      path: /metrics
+      scheme: http
+  jobLabel: {{ include "network-latency-exporter.name" . }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchExpressions:
+      - key: "app.kubernetes.io/name"
+        operator: In
+        values:
+          - {{ include "network-latency-exporter.name" . }}
+{{- end }}

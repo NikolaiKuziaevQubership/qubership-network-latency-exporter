@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "network-latency-exporter.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "network-latency-exporter.name" . }}
+    app.kubernetes.io/component: monitoring
+    {{- if .Values.additionalLabels }}
+      {{- toYaml .Values.additionalLabels | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "network-latency-exporter.name" . }}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "network-latency-exporter.name" . }}
+    spec:
+      shareProcessNamespace: true
+      containers:
+        - name: {{ include "network-latency-exporter.name" . }}
+          image: {{ .Values.image }}
+          args:
+            {{- if .Values.extraArgs }}
+              {{ toYaml .Values.extraArgs | nindent 12 }}
+            {{- end }}
+          ports:
+            - containerPort: 8125
+              protocol: TCP
+            - containerPort: 8094
+              protocol: TCP
+            - containerPort: 8092
+              protocol: UDP
+            - containerPort: 9273
+              name: metrics
+              protocol: TCP
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: REQUEST_TIMEOUT
+              value: {{ .Values.requestTimeout | quote }}
+            - name: TIMEOUT
+              value: {{ .Values.timeout }}
+            - name: PACKETS_NUM
+              value: {{ .Values.packetsNum | quote }}
+            - name: PACKET_SIZE
+              value: {{ .Values.packetSize | quote }}
+            - name: CHECK_TARGET
+              value: {{ .Values.checkTarget | quote }}
+            - name: DISCOVER_ENABLE
+              value: {{ default "true" .Values.discoverEnable | quote }}
+            - name: LATENCY_TYPES
+              value: {{ .Values.latencyTypes | quote }}
+            - name: MTR_TIMEOUT
+              value: {{ .Values.mtrTimeout | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          terminationMessagePath: /dev/termination-log
+          imagePullPolicy: IfNotPresent
+      serviceAccountName: {{ template "network-latency-exporter.serviceAccountName" . }}
+      {{- if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.securityContext }}
+      securityContext:
+        runAsUser: {{ default 0 .Values.securityContext.runAsUser }}
+        fsGroup: {{ default 2000 .Values.securityContext.fsGroup }}
+      {{- end }}

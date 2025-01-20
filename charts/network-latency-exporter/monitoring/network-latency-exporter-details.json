@@ -1,0 +1,986 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "The dashboard shows network RTT metrics per source host / destination host pairs",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 3355,
+    "iteration": 1644245127357,
+    "links": [
+      {
+        "icon": "external link",
+        "tags": [
+          "network"
+        ],
+        "type": "dashboards"
+      }
+    ],
+    "liveNow": false,
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "panels": [],
+        "repeat": "dest",
+        "title": "From $source to $dest",
+        "type": "row"
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$datasource"
+        },
+        "decimals": 2,
+        "description": "Shows average mean RTT metrics over selected time range (with package loss). Displayed values is a values for whole probe which includes $packets_num packets sent",
+        "fieldConfig": {
+          "defaults": {
+            "links": []
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "hiddenSeries": false,
+        "id": 6,
+        "interval": "$c_interval",
+        "legend": {
+          "alignAsTable": true,
+          "avg": false,
+          "current": true,
+          "max": false,
+          "min": false,
+          "rightSide": true,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "8.3.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [
+          {
+            "$$hashKey": "object:75",
+            "alias": "RTT Mean",
+            "color": "#FA6400",
+            "fill": 0,
+            "fillBelowTo": "RTT Min",
+            "linewidth": 2
+          },
+          {
+            "$$hashKey": "object:76",
+            "alias": "RTT Max",
+            "color": "rgba(138, 184, 255, 0.28)",
+            "fillBelowTo": "RTT Min",
+            "lines": false
+          },
+          {
+            "$$hashKey": "object:77",
+            "alias": "RTT Min",
+            "color": "#37872D",
+            "lines": false
+          },
+          {
+            "$$hashKey": "object:78",
+            "alias": "Loss",
+            "bars": true,
+            "color": "#C4162A",
+            "lines": false,
+            "pointradius": 1,
+            "points": true,
+            "yaxis": 2
+          }
+        ],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "RTT Mean",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PC3E95692D54ABCC0"
+            },
+            "exemplar": true,
+            "expr": "avg(network_latency_rtt_mean{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})",
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "interval": "",
+            "legendFormat": "RTT Mean",
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "SELECT mean(\"rtt_mean\") FROM \"t_network_latency\" WHERE \"source\" = '$source' AND \"destination\" = '$dest' AND \"protocol\" = '$protocol' AND $timeFilter GROUP BY time($__interval) fill(none)",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          },
+          {
+            "alias": "RTT Max",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PC3E95692D54ABCC0"
+            },
+            "exemplar": true,
+            "expr": "avg(network_latency_rtt_max{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})",
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "interval": "",
+            "legendFormat": "RTT Max",
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "SELECT mean(\"rtt_max\") FROM \"t_network_latency\" WHERE \"source\" = '$source' AND \"destination\" = '$dest' AND \"protocol\" = '$protocol' AND $timeFilter GROUP BY time($__interval) fill(none)",
+            "rawQuery": true,
+            "refId": "B",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          },
+          {
+            "alias": "RTT Min",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PC3E95692D54ABCC0"
+            },
+            "exemplar": true,
+            "expr": "avg(network_latency_rtt_min{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})",
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "interval": "",
+            "legendFormat": "RTT Min",
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "SELECT mean(\"rtt_min\") FROM \"t_network_latency\" WHERE \"source\" = '$source' AND \"destination\" = '$dest' AND \"protocol\" = '$protocol' AND $timeFilter GROUP BY time($__interval) fill(none)",
+            "rawQuery": true,
+            "refId": "C",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          },
+          {
+            "alias": "Loss",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PC3E95692D54ABCC0"
+            },
+            "exemplar": true,
+            "expr": "(round(avg(network_latency_sent{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})) - round(avg(network_latency_received{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"}))) / round(avg(network_latency_sent{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})) * 100",
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "interval": "",
+            "legendFormat": "Loss",
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "SELECT (round(mean(\"sent\")) - round(mean(\"received\"))) / round(mean(\"sent\")) * 100 FROM \"t_network_latency\" WHERE \"source\" = '$source' AND \"destination\" = '$dest' AND \"protocol\" = '$protocol' AND $timeFilter GROUP BY time($__interval) fill(previous)",
+            "rawQuery": true,
+            "refId": "D",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "thresholds": [],
+        "timeRegions": [],
+        "title": "Average Mean RTT With Packet Loss",
+        "tooltip": {
+          "shared": true,
+          "sort": 2,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "mode": "time",
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "$$hashKey": "object:125",
+            "decimals": 2,
+            "format": "ms",
+            "label": "Ping",
+            "logBase": 1,
+            "min": "0",
+            "show": true
+          },
+          {
+            "$$hashKey": "object:126",
+            "format": "percent",
+            "label": "Packet Loss",
+            "logBase": 1,
+            "max": "100",
+            "min": "0",
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": true
+        }
+      },
+      {
+        "aliasColors": {
+          "Loss Percent": "dark-red"
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$datasource"
+        },
+        "description": "Shows percent of packet loss per probe (which includes $packets_num packets sent)",
+        "fieldConfig": {
+          "defaults": {
+            "links": []
+          },
+          "overrides": []
+        },
+        "fill": 0,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 8
+        },
+        "hiddenSeries": false,
+        "id": 8,
+        "interval": "$c_interval",
+        "legend": {
+          "alignAsTable": true,
+          "avg": false,
+          "current": true,
+          "max": true,
+          "min": true,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "8.3.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": true,
+        "targets": [
+          {
+            "alias": "Loss Percent",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PC3E95692D54ABCC0"
+            },
+            "exemplar": true,
+            "expr": "(round(avg(network_latency_sent{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})) - round(avg(network_latency_received{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"}))) / round(avg(network_latency_sent{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})) * 100",
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "interval": "",
+            "legendFormat": "Loss Percent",
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "SELECT (round(mean(\"sent\")) - round(mean(\"received\"))) / round(mean(\"sent\")) * 100 FROM \"t_network_latency\" WHERE \"source\" = '$source' AND \"destination\" = '$dest' AND \"protocol\" = '$protocol' AND $timeFilter GROUP BY time($__interval) fill(previous)",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "thresholds": [],
+        "timeRegions": [],
+        "title": "Packet Loss",
+        "tooltip": {
+          "shared": true,
+          "sort": 2,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "mode": "time",
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "$$hashKey": "object:211",
+            "decimals": 1,
+            "format": "percent",
+            "logBase": 1,
+            "max": "100",
+            "min": "0",
+            "show": true
+          },
+          {
+            "$$hashKey": "object:212",
+            "format": "short",
+            "logBase": 1,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false
+        }
+      },
+      {
+        "aliasColors": {
+          "Loss Percent": "light-green"
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$datasource"
+        },
+        "description": "Show RTT average time per probe (which includes $packets_num packets sent)",
+        "fieldConfig": {
+          "defaults": {
+            "links": []
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 8
+        },
+        "hiddenSeries": false,
+        "id": 10,
+        "interval": "$c_interval",
+        "legend": {
+          "alignAsTable": true,
+          "avg": false,
+          "current": true,
+          "max": true,
+          "min": true,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "8.3.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "Loss Percent",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PC3E95692D54ABCC0"
+            },
+            "exemplar": true,
+            "expr": "avg(network_latency_rtt_mean{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"}) / avg(network_latency_sent{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})",
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "interval": "",
+            "legendFormat": "RTT",
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "SELECT mean(\"rtt_mean\") / mean(\"sent\") FROM \"t_network_latency\" WHERE \"source\" = '$source' AND \"destination\" = '$dest' AND \"protocol\" = '$protocol' AND $timeFilter GROUP BY time($__interval) fill(none)",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "thresholds": [],
+        "timeRegions": [],
+        "title": "RTT",
+        "tooltip": {
+          "shared": true,
+          "sort": 2,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "mode": "time",
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "$$hashKey": "object:292",
+            "decimals": 2,
+            "format": "ms",
+            "logBase": 1,
+            "min": "0",
+            "show": true
+          },
+          {
+            "$$hashKey": "object:293",
+            "format": "short",
+            "logBase": 1,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false
+        }
+      },
+      {
+        "aliasColors": {
+          "Loss Percent": "dark-red"
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$datasource"
+        },
+        "description": "Shows standard deviation of RTT  mean value per probe (which includes $packets_num packets sent)",
+        "fieldConfig": {
+          "defaults": {
+            "links": []
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 8
+        },
+        "hiddenSeries": false,
+        "id": 12,
+        "interval": "$c_interval",
+        "legend": {
+          "alignAsTable": true,
+          "avg": false,
+          "current": true,
+          "max": true,
+          "min": true,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "8.3.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "RTT Deviation",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PC3E95692D54ABCC0"
+            },
+            "exemplar": true,
+            "expr": "avg(network_latency_rtt_stddev{source=~\"$source\", protocol=\"$protocol\", destination=~\"$dest\"})",
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "interval": "",
+            "legendFormat": "RTT Deviation",
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "SELECT mean(\"rtt_stddev\") FROM \"t_network_latency\" WHERE \"source\" = '$source' AND \"destination\" = '$dest' AND \"protocol\" = '$protocol' AND $timeFilter GROUP BY time($__interval) fill(none)",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "thresholds": [],
+        "timeRegions": [],
+        "title": "RTT Deviation",
+        "tooltip": {
+          "shared": true,
+          "sort": 2,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "mode": "time",
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "$$hashKey": "object:373",
+            "decimals": 2,
+            "format": "ms",
+            "logBase": 1,
+            "min": "0",
+            "show": true
+          },
+          {
+            "$$hashKey": "object:374",
+            "format": "short",
+            "logBase": 1,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false
+        }
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 34,
+    "style": "dark",
+    "tags": [
+      "network",
+      "k8s"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "Platform Monitoring Prometheus",
+            "value": "Platform Monitoring Prometheus"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "label": "Datasource",
+          "multi": false,
+          "name": "datasource",
+          "options": [],
+          "query": "prometheus",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "type": "datasource"
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "definition": "label_values(network_latency_status, source)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Source Host",
+          "multi": false,
+          "name": "source",
+          "options": [],
+          "query": {
+            "query": "label_values(network_latency_status, source)",
+            "refId": "Platform Monitoring Prometheus-source-Variable-Query"
+          },
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "definition": "label_values(network_latency_status{destination!=\"$source\"}, destination)",
+          "hide": 0,
+          "includeAll": true,
+          "label": "Destination Host",
+          "multi": true,
+          "name": "dest",
+          "options": [],
+          "query": {
+            "query": "label_values(network_latency_status{destination!=\"$source\"}, destination)",
+            "refId": "Platform Monitoring Prometheus-dest-Variable-Query"
+          },
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": true,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "definition": "label_values(network_latency_status{source=~\"$source\", destination=~\"$dest\"}, protocol)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Network Protocol",
+          "multi": false,
+          "name": "protocol",
+          "options": [],
+          "query": {
+            "query": "label_values(network_latency_status{source=~\"$source\", destination=~\"$dest\"}, protocol)",
+            "refId": "Platform Monitoring Prometheus-protocol-Variable-Query"
+          },
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "definition": "label_values(network_latency_status, interval)",
+          "hide": 2,
+          "includeAll": true,
+          "label": "Collection Interval",
+          "multi": true,
+          "name": "c_interval",
+          "options": [],
+          "query": {
+            "query": "label_values(network_latency_status, interval)",
+            "refId": "Platform Monitoring Prometheus-c_interval-Variable-Query"
+          },
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "definition": "label_values(network_latency_status, packets)",
+          "hide": 2,
+          "includeAll": true,
+          "label": "Packets Sent Per Probe",
+          "multi": true,
+          "name": "packets_num",
+          "options": [],
+          "query": {
+            "query": "label_values(network_latency_status, packets)",
+            "refId": "Platform Monitoring Prometheus-packets_num-Variable-Query"
+          },
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "timezone": "",
+    "title": "Network Latency Details",
+    "uid": "",
+    "version": 1,
+    "weekStart": ""
+}

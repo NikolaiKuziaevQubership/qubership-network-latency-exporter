@@ -1,0 +1,33 @@
+{{- if .Values.rbac.createClusterRole }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "network-latency-exporter.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "network-latency-exporter.name" . }}
+    app.kubernetes.io/component: monitoring
+rules:
+  - apiGroups:
+      - "security.openshift.io"
+    resources:
+      - securitycontextconstraints
+    resourceNames:
+      - {{ include "network-latency-exporter.name" . }}
+    verbs:
+      - 'use'
+  - apiGroups:
+      - "extensions"
+    resources:
+      - podsecuritypolicies
+    resourceNames:
+      - {{ include "network-latency-exporter.name" . }}
+    verbs:
+      - 'use'
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - 'list'
+      - 'watch'
+{{- end }}

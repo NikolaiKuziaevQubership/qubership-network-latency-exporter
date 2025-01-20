@@ -1,0 +1,74 @@
+variables:
+  GOLANG_CI_LINT_IMAGE: artifactorycn.netcracker.com:17114/golangci/golangci-lint:v1.62.2
+  MARKDOWN_LINT_IMAGE: artifactorycn.netcracker.com:17114/06kellyjac/markdownlint-cli:0.28.1-alpine
+  HELM_LINT_IMAGE: artifactorycn.netcracker.com:17114/helmpack/chart-testing:v3.11.0
+
+  GOLANG_BUILD_IMAGE: artifactorycn.netcracker.com:17014/custom-build-env/monitoring-build-image:golang-1.23.2-kubebuilder-3.13.0
+
+  GIT_DEPTH: 0
+
+stages:
+  - lint
+  - tests
+
+golangci-lint:
+  stage: lint
+  image:
+    name: ${GOLANG_CI_LINT_IMAGE}
+    # WA to the problem "shell not found"
+    entrypoint: [ '/bin/bash', '-c', 'ln -snf /bin/bash /bin/sh && /bin/bash -c $0' ]
+  tags:
+    - NETCRACKER
+  before_script:
+    - golangci-lint --version
+  script:
+    - export GOPROXY="https://artifactorycn.netcracker.com/pd.sandbox-staging.go.group"
+    - golangci-lint run ./cmd/... ./pkg/...
+  allow_failure: true
+
+helm-lint:
+  stage: lint
+  image:
+    name: ${HELM_LINT_IMAGE}
+  tags:
+    - NETCRACKER
+  before_script:
+    - helm version
+    - ct version
+  script:
+    - ct lint --check-version-increment=false --chart-dirs charts
+  allow_failure: true
+
+markdown-lint:
+  stage: lint
+  image:
+    name: ${MARKDOWN_LINT_IMAGE}
+    entrypoint:
+      - "/usr/bin/env"
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  tags:
+    - NETCRACKER
+  before_script:
+    - markdownlint --version
+  script:
+    - markdownlint --config ./.gitlab/ci/linter_configs/.markdownlint.yaml .
+  allow_failure: true
+
+unit-test:
+  stage: tests
+  image: ${GOLANG_BUILD_IMAGE}
+  tags:
+    - NETCRACKER
+  script:
+    - go get -v -t ./...
+    - go test -v -shuffle=on ./pkg/... -coverprofile=coverage.txt -covermode count
+    - go tool cover -func coverage.txt
+    - $GOPATH/bin/gocover-cobertura < coverage.txt > coverage.xml
+  coverage: '/^total:[\s\w\(\)]*\d+.\d+%/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  allow_failure: false
+
