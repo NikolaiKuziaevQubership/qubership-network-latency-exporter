@@ -1,0 +1,27 @@
+{{- if and .Values.rbac.setupSecurityContext (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: {{ include "network-latency-exporter.name" . }}
+priority: 0
+users: []
+groups: []
+readOnlyRootFilesystem: false
+requiredDropCapabilities: []
+defaultAddCapabilities: []
+allowedCapabilities: []
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+allowPrivilegedContainer: false
+allowHostDirVolumePlugin: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowHostIPC: false
+allowPrivilegeEscalation: false
+volumes:
+  - configMap
+  - secret
+{{- end }}

@@ -1,0 +1,5 @@
+The network-latency-exporter has been installed. Check it status by running:
+* OpenShift:
+  oc --namespace {{ $.Release.Namespace }} get pods -l "name={{ template "network-latency-exporter.fullname" . }}"
+* Kubernetes:
+  kubectl --namespace {{ $.Release.Namespace }} get pods -l "name={{ template "network-latency-exporter.fullname" . }}"
