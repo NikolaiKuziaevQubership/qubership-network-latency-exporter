@@ -148,8 +148,18 @@ func main() {
 
 		go nw.watch(logger, watcher, cfgCont, ctx)
 
+		// register exporter only once
+		err = prometheus.Register(exporter)
+		if err != nil {
+			if !prometheus.Unregister(exporter) {
+				_ = level.Error(logger).Log("msg", "Exporter can't be unregistered")
+				return
+			}
+			prometheus.MustRegister(exporter)
+		}
+
 		metricHandlerFunc := collector.MetricHandler(exporter, *maxRequests, logger)
-		http.Handle(*metricsPath, promhttp.InstrumentMetricHandler(prometheus.DefaultRegisterer, utils.AddHSTSHeader(metricHandlerFunc)))
+		http.Handle(*metricsPath, utils.AddHSTSHeader(promhttp.InstrumentMetricHandler(prometheus.DefaultRegisterer, metricHandlerFunc)))
 		http.Handle("/-/ready", utils.AddHSTSHeader(readinessChecker()))
 		http.Handle("/-/healthy", utils.AddHSTSHeader(healthChecker()))
 

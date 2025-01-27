@@ -102,15 +102,6 @@ func MetricHandler(exporter *Exporter, maxRequests int, logger log.Logger) http.
 		exporter.Mutex.RLock()
 		defer exporter.Mutex.RUnlock()
 
-		err := prometheus.Register(exporter)
-		if err != nil {
-			if !prometheus.Unregister(exporter) {
-				_ = level.Error(logger).Log("msg", "Exporter can't be unregistered")
-				return
-			}
-			prometheus.MustRegister(exporter)
-		}
-
 		// Delegate http serving to Prometheus client library, which will call collector.Collect.
 		handler := promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{
 			ErrorLog:            stdlog.New(log.NewStdlibAdapter(level.Debug(logger)), "prom_log: ", 0),
