@@ -64,6 +64,10 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           terminationMessagePath: /dev/termination-log
           imagePullPolicy: IfNotPresent
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ template "network-latency-exporter.serviceAccountName" . }}
       {{- if .Values.tolerations }}
       tolerations:

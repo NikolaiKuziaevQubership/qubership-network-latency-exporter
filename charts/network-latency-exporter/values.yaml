@@ -31,7 +31,12 @@ serviceAccount:
 # Type: string
 # Mandatory: yes
 #
-image: ghcr.io/netcracker/network-latency-exporter:main
+image: ghcr.io/netcracker/qubership-network-latency-exporter:main
+
+# Only pods which provide own keys can access the private registry.
+# Default: []
+#
+imagePullSecrets: []
 
 # The resources describes the compute resource requests and limits for single Pods.
 # Ref: https://kubernetes.io/docs/user-guide/compute-resources/
