@@ -60,7 +60,7 @@ func GetNamespace() string {
 	return "monitoring"
 }
 
-// HSTS header
+// add HSTS header
 func AddHSTSHeader(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Scheme == "https" {
