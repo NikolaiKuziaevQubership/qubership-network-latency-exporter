@@ -33,3 +33,17 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Find a network-latency-exporter image in various places.
+Image can be found from:
+* specified by user from .Values.image
+* default value
+*/}}
+{{- define "network-latency-exporter.image" -}}
+  {{- if .Values.image -}}
+    {{- printf "%s" .Values.image -}}
+  {{- else -}}
+    {{- printf "ghcr.io/netcracker/qubership-network-latency-exporter:main" -}}
+  {{- end -}}
+{{- end -}}

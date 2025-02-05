@@ -24,7 +24,7 @@ spec:
       shareProcessNamespace: true
       containers:
         - name: {{ include "network-latency-exporter.name" . }}
-          image: {{ .Values.image }}
+          image: {{ template "network-latency-exporter.image" . }}
           args:
             {{- if .Values.extraArgs }}
               {{ toYaml .Values.extraArgs | nindent 12 }}
