@@ -10,7 +10,7 @@ require (
 	github.com/prometheus/client_golang v1.20.1
 	github.com/prometheus/common v0.55.0
 	github.com/prometheus/exporter-toolkit v0.11.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	k8s.io/api v0.26.15
 	k8s.io/apimachinery v0.26.15
 	k8s.io/client-go v0.26.15
